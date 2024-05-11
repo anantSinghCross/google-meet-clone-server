@@ -11,7 +11,7 @@ const io = require("socket.io")(server, {
 app.use(cors());
 const PORT = process.env.PORT || 8090;
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  res.send("Success");
 });
 
 io.on("connection", (socket) => {
@@ -22,8 +22,8 @@ io.on("connection", (socket) => {
   socket.on("callUser", ({ userToCall, signalData, from, name }) => {
     io.to(userToCall).emit("callUser", { signal: signalData, from, name });
   });
-  socket.on("answerCall", (data) => {
-    io.to(data.to).emit("callAccepted", data.signal);
+  socket.on("answerCall", ({signal, to, receiverName}) => {
+    io.to(to).emit("callAccepted", {signal, to, receiverName});
   });
 });
 server.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
